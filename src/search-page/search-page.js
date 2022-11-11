@@ -27,9 +27,9 @@ const SearchPage = () => {
         setSearchValue(event.target.value);
     }
 
-    // const filterPatients = patientInfo.filter((patient) => 
-    //     patient.name.toLowerCase().includes(searchValue.toLowerCase())
-    // );
+    const filterPatients = patientInfo.filter((patient) => 
+        patient.name.toLowerCase().includes(searchValue.toLowerCase())
+    );
 
     return (
         <div>
@@ -37,7 +37,14 @@ const SearchPage = () => {
             {patientInfo.map((info) => {
                 return (
                     <div>
-                        <InfoCard name={info.name} date={info.date} ailment={info.ailment} searchValue={searchValue} />
+                        <InfoCard 
+                            key={info.name}
+                            name={info.name} 
+                            date={info.date} 
+                            ailment={info.ailment} 
+                            searchValue={searchValue} 
+                            patientInfo={filterPatients}
+                        />
             
                     </div>
                 )
