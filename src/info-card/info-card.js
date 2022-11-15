@@ -6,7 +6,7 @@ const InfoCard = ({ date, name, ailment, searchValue }) => {
             <h1>{name}</h1>
             <p>Intake Date: {date}</p>
             <p>Ailment: {ailment}</p>
-            <p>Matches search: {name.includes(searchValue) ? 'Yes' : 'No'}</p>
+            <p>Matches search: {name.toLowerCase().includes(searchValue) ? 'Yes' : null}</p>
         </div>
     );
 };
