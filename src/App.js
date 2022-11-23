@@ -1,48 +1,145 @@
-import React, { useEffect, useState } from 'react';
-import { getRandomCatImage } from './utils';
+import React, { useState, useEffect, Fragment } from 'react';
 
-const useDebounce = (callback, dependencies, delay = 1000) => {
-  const [catTimer, setCatTimer] = useState(null);
+const useEffectNoInitialization = (callback, dependencyArray) => {
+  const [initialized, setInitialized] = useState(false);
   useEffect(() => {
-    if (catTimer) {
-      clearTimeout(catTimer);
-    }
-    const timeout = setTimeout(() => {
+    if (initialized) {
       callback();
-    }, delay)
-    setCatTimer(timeout);
-  }, dependencies)
+    } else {
+      setInitialized(true);
+    }
+  }, dependencyArray)
 }
 
+const appetizers = [
+  {
+    title: 'Prawn Cocktail',
+    url: 'https://richanddelish.com/wp-content/uploads/2022/02/FI-best-easy-creme-brulee-recipe.png',
+  },
+  {
+    title: 'Side Salad',
+    url: 'https://richanddelish.com/wp-content/uploads/2022/02/FI-best-easy-creme-brulee-recipe.png',
+  },
+  {
+    title: 'Garlic Bread',
+    url: 'https://richanddelish.com/wp-content/uploads/2022/02/FI-best-easy-creme-brulee-recipe.png',
+  }
+];
+
+const entrees = [
+  {
+    title: 'T-bone steak',
+    url: 'https://richanddelish.com/wp-content/uploads/2022/02/FI-best-easy-creme-brulee-recipe.png',
+  },
+  {
+    title: 'Fish and Chips',
+    url: 'https://richanddelish.com/wp-content/uploads/2022/02/FI-best-easy-creme-brulee-recipe.png',
+  },
+  {
+    title: 'Irish Stew',
+    url: 'https://richanddelish.com/wp-content/uploads/2022/02/FI-best-easy-creme-brulee-recipe.png',
+  }
+];
+
+const healthyEntrees = [
+  {
+    title: 'Baked Chicken',
+    url: 'https://richanddelish.com/wp-content/uploads/2022/02/FI-best-easy-creme-brulee-recipe.png',
+  },
+  {
+    title: 'Grilled rainbow trout',
+    url: 'https://richanddelish.com/wp-content/uploads/2022/02/FI-best-easy-creme-brulee-recipe.png',
+  },
+  {
+    title: 'Salmon',
+    url: 'https://richanddelish.com/wp-content/uploads/2022/02/FI-best-easy-creme-brulee-recipe.png',
+  }
+];
+
+const desserts = [
+  {
+    title: 'Creme Brulee',
+    url: 'https://richanddelish.com/wp-content/uploads/2022/02/FI-best-easy-creme-brulee-recipe.png',
+  },
+  {
+    title: 'Poptarts',
+    url: 'https://richanddelish.com/wp-content/uploads/2022/02/FI-best-easy-creme-brulee-recipe.png',
+  },
+  {
+    title: 'Pumpkin Pie',
+    url: 'https://richanddelish.com/wp-content/uploads/2022/02/FI-best-easy-creme-brulee-recipe.png',
+  }
+];
+
 function App() {
-  const [name, setName] = useState('');
-  const [age, setAge] = useState(3);
-  const [catImageUrl, setCatImageUrl] = useState('');
-
-  const handleNameChange = (event) => {
-    setName(event.target.value)
+  const [appetizer, setAppetizer] = useState(null);
+  const handleAppetizerChange = (event) => {
+    setAppetizer(event.target.value)
   }
-
-  const handleAgeChange = (event) => {
-    setAge(event.target.value)
+  const [entree, setEntree] = useState(null);
+  const handleEntreeChange = (event) => {
+    setEntree(event.target.value)
   }
+  const [dessert, setDessert] = useState(null);
+  const handleDessertChange = (event) => {
+    setDessert(event.target.value)
+  }
+  useEffectNoInitialization(() => {
+    console.log('menu \n')
+    console.log('appetizer', appetizer);
+    console.log('entree', entree);
+    console.log('dessert', dessert);
+  }, [appetizer, entree, dessert]);
 
-  useDebounce(() => {
-    const fetchCatImage = async () => {
-      setCatImageUrl(await getRandomCatImage());
-    }
-    fetchCatImage();
-  }, [name], 2000);
+  const entreeList = appetizer?.includes('healthy') ? healthyEntrees : entrees;
 
-  useDebounce(() => {
-    console.log('number input changed', age)
-  }, [age], 500);
-  
   return (
     <>
-      <input value={name} onChange={handleNameChange} />
-      <input type="number" value={age} onChange={handleAgeChange} />
-      <img src={catImageUrl} style={{width: '200px'}} />
+      <div style={{ textAlign: 'center' }}>
+        <select onChange={handleAppetizerChange} value={appetizer}>
+          {appetizers.map((appetizer, idx) => {
+            return (
+              <>
+                <option value={idx}>
+                  {appetizer.title}
+                </option>
+                <option value={`${idx}-healthy`}>
+                  Healthy: {appetizer.title}
+                </option>
+              </>
+            )
+          })}
+        </select>
+        <select onChange={handleEntreeChange} value={entree}>
+          {entreeList.map((entree, idx) => {
+            return (
+              <>
+                <option value={idx}>
+                  {entree.title}
+                </option>
+              </>
+            )
+          })}
+        </select>
+        <select onChange={handleDessertChange} value={dessert}>
+          {desserts.map((dessert, idx) => {
+            return (
+              <>
+                <option value={idx}>
+                  {dessert.title}
+                </option>
+              </>
+            )
+          })}
+        </select>
+        <div className='menu-preview'>
+          {/* Note that we have not handled for when we select a healthy appetizer here; the index will actually be a string (i.e. 1-healthy) which cannot be used to access our array*/}
+          <img src={appetizers?.[appetizer]?.url}/>
+          <img src={entrees?.[entree]?.url}/>
+          <img src={desserts?.[dessert]?.url}/>
+        </div>
+      </div>
+      <div>Test</div>
     </>
   );
 }
