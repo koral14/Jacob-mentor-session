@@ -1,22 +1,69 @@
-import React, {useEffect, useState} from 'react';
-import StateTutorial from './StateTutorials';
-import Select from './Select';
-import InputField from './inputField';
+import React, {useState, useEffect} from 'react';
+import TodoList from './TodoList';
+import AddTodoForm from './AddTodoForm';
 
 function App() {
-  const [catImg, setCatImg] = useState('');
+
+  // const [todoList, setTodoList] = useState([]);
+  // const [isLoading, setIsLoading] = useState(true);
+
+  const [todoListProp, setTodoList] = useState({
+    todoList: [],
+    isLoading: true,
+  });
+  const {todoList, isLoading} = todoListProp;
 
   useEffect(() => {
-    fetch('https://api.thecatapi.com/v1/images/search')
-      .then(res => res.json())
-      .then(data => setCatImg(data[0].url))
-  }, [catImg])
+    new Promise ((resolve, reject) => {
+      setTimeout(() => {
+        resolve({
+          data: {
+            todoList: JSON.parse(localStorage.getItem('savedTodoList')) || [],
+          },
+        });
+      }, 2000);
+    // }).then((result) => {
+    //   setTodoList([...result.data.todoList]);
+    //   setIsLoading(false);
+    }).then((result) => {
 
+      setTodoList({todoList: result.data.todoList, isLoading: false})
+      console.log(result)
+  });
+    // });
+  }, []);
+
+  useEffect(() => {
+    if (!isLoading) {
+      localStorage.setItem('savedTodoList', JSON.stringify(todoList));
+    }
+    }, [todoList, isLoading]);
+  
+
+  const addTodo = (newTodo) => {
+    setTodoList({todoList:[...todoList, newTodo]});  
+  }
+
+  const removeTodo = (item) => {
+    const modifiedTodo = todoList.filter(
+      (todo) => item.id !== todo.id
+    );
+    setTodoList({todoList:modifiedTodo});
+  };
+ 
   return (
-    <>
-      <h1>Cat Photo</h1>
-      <img src={catImg} alt="Kitty" />
-    </>
+    <div>
+      <h1>ToDo List</h1>
+
+      <AddTodoForm onAddTodo={addTodo} />
+
+      {isLoading ? (
+        <p>Loading...</p>
+      ) : (
+        <TodoList todoList={todoList} onRemoveTodo={removeTodo} />
+      )
+      }
+    </div>
   );
 }
 
