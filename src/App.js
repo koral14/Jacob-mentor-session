@@ -1,93 +1,157 @@
-import React, { useReducer, useState } from 'react';
+import React, { Fragment, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import List from './list';
+import AddItem from './addItem';
+import './App.css'
+import WelcomeDialog from './welcomeDialog';
+import SplitPane from './splitPane';
 
 const initialList = [
   {
     id: 'a',
     name: 'Robin',
+    isActive: false,
   },
   {
     id: 'b',
     name: 'Dennis',
+    isActive: true,
   },
 ]
 
 const initFamName = [
   {
     id: 1,
-    famName: "Gorkii",
+    famName: "Croco",
+    isComplete: true,
   },
   {
     id: 2,
-    famName: "Zombi",
+    famName: "McKinley",
+    isComplete: false,
   }
 ]
 
-// 3rd version of adding using useReducer:
-const listReducer = (state, action) => {
-  switch (action.type) {
-    case 'ADD_ITEM':
-      return state.concat({ name: action.name, id: action.id });
-    default:
-      throw new Error();
-  }
-};
-
 function App() {
-  const [list, dispatchList] = useReducer(listReducer, initialList);
+
+  const [list, setList] = useState(initialList);
   const [name, setName] = useState('');
+
+  const [listFam, setListFam] = useState(initFamName);
+  const [famName, setFamName] = useState('');
 
   const handleChange = (e) => {
     setName(e.target.value);
   }
 
   const handleAdd = () => {
-    dispatchList({ type: 'ADD_ITEM', name, id: uuidv4() });
+    const newList = list.concat({ name, id: uuidv4() })
+    setList(newList);
     setName('');
   }
 
-  // const [list, setList] = useState(initialList);
-  // const [name, setName] = useState('');
+  const handleRemove = (id) => {
+    console.log(id);
+    const modifiedList = list.filter(
+      (item) => item.id !== id
+    );
+    setList(modifiedList);
+  };
 
-  const [listFam, setListFam] = useState(initFamName);
-  const [famName, setFamName] = useState('');
+  const handleRemoveFam = (id) => {
+    console.log(id);
+    const modifiedList = listFam.filter(
+      (item) => item.id !== id
+    );
+    setListFam(modifiedList);
+  };
 
-  // const handleChange = (e) => {
-  //   // track input field's state
-  //   setName(e.target.value);
-  // }
-  
-  // const handleAdd = () => {
-  //   // add item: const array3 = array1.concat(array2); 
-  //   // object shorthand initialization- variable's name equals the object's property name { name }; how to write it differently if not using shorthand...?
-  //   const newList = list.concat({ name, id: uuidv4() });
-  //   setList(newList);
-  //   setName('')
-  // }
+  const handleToggleAny = (id) => {
+    // toggle item's ...
+    console.log(id);
+    const newList = list.map((item) => { //change 'list'
+      if (item.id === id) {
+        const updatedItem = {
+          ...item,  // how to read this line?? -unpack each item from list...???
+          isActive: !item.isActive, // change isActive 2 places
+        };
+        return updatedItem;
+      }
+      return item;
+    });
+    setList(newList); // change setList
+  };
+
+  const handleToggleActive = (id) => {
+    // toggle item's active status
+    console.log(id);
+    const newList = list.map((item) => {
+      if (item.id === id) {
+        const updatedItem = {
+          ...item,
+          isActive: !item.isActive,
+        };
+        return updatedItem;
+      }
+      return item;
+    });
+    setList(newList);
+  };
+
+  const handleToggleComplete = (id) => {
+    // toggle item's complete status
+    console.log(id);
+    const newList = listFam.map((item) => {
+      if (item.id === id) {
+        const updatedItem = {
+          ...item,
+          isComplete: !item.isComplete,
+        };
+        return updatedItem;
+      } 
+      return item;
+    });
+    setListFam(newList);
+  };
 
   const handleChangeFamName = (e) => {
     setFamName(e.target.value);
   }
 
-  const handleAddFamName = () => {
-    // const newListFam = listFam.concat({ listFam, id: uuidv4() });
-    // setListFam(newListFam);
-    // setFamName('');    
+  const handleAddFamName = () => { 
     const newListFam = listFam.concat({ famName, id: uuidv4() });
     setListFam(newListFam);
     setFamName('')
   }
 
   return (
+    
     <div>
+      <SplitPane 
+        right={
+          <>
+            <WelcomeDialog />
+            <p className='Contacts'>test</p>
+          </>
+        }
+        left={
+          <h2 className='Chat'>This is left side of the screen</h2>
+        }
+      />
+      
+      <br />
       {/* the same but with smaller components and props for 2nd and 3rd */}
       <AddItem 
         name={name}
         handleChange={handleChange}
         handleAdd={handleAdd}
       />
-      <List list={list} />
-      
+      <List 
+        list={list} 
+        onRemove={handleRemove} 
+        handleToggle={handleToggleActive}
+      />
+
       <hr />
       {/* the same but with all code in return statement */}
       <div>
@@ -100,28 +164,34 @@ function App() {
       <hr />
       <ol>
         {listFam.map((item) => (
-          <li key={item.id}>{item.famName}</li>
+          <Fragment key={item.id}>
+            <li>
+              <span 
+                style={{
+                  textDecoration: item.isComplete ? 'line-through' : 'none',
+                }}
+              >
+                {item.famName} <span> </span>
+              </span>
+              <button 
+                type="button" 
+                onClick={() => {handleToggleComplete(item.id)}}
+              >
+                {item.isComplete ? 'Done' : 'Undo'}
+              </button>
+              <button 
+                type="button" 
+                onClick={() => {handleRemoveFam(item.id)}}
+              >
+                Remove Family Name
+              </button>
+            </li>
+            <br />
+          </Fragment>
         ))}
       </ol>
     </div>
   );
 };
-
-const AddItem = ({ name, handleAdd, handleChange }) => (
-  <div>
-    <input type='text' onChange={handleChange} value={name} placeholder="name..." />
-    <button type="button" onClick={handleAdd}>
-      Add
-    </button>
-    </div>
-)
-
-const List = ({ list }) => (
-  <ul>
-    {list.map((item) => (
-      <li key={item.id}>{item.name}</li>
-    ))}
-  </ul>
-)
 
 export default App;
