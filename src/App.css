@@ -1,54 +1,38 @@
-.FancyBorder {
-    padding: 10px 10px;
-    border: 10px solid;
-  }
-  
-  .FancyBorder-blue {
-    border-color: blue;
-  }
-  
-  .Dialog-title {
-    margin: 0;
-    font-family: sans-serif;
-  }
-  
-  .Dialog-message {
-    font-size: larger;
-  }
+.App {
+  text-align: center;
+}
 
-  
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
 
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
 
-  html, body, #root {
-    width: 100%;
-    height: 100%;
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
   }
-  
-  .SplitPane {
-    width: 100%;
-    height: 100%;
+  to {
+    transform: rotate(360deg);
   }
-  
-  .SplitPane-left {
-    float: left;
-    width: 40%;
-    height: 100%;
-  }
-  
-  .SplitPane-right {
-    float: left;
-    width: 60%;
-    height: 100%;
-  }
-  
-  .Contacts {
-    width: 100%;
-    height: 100%; 
-    background: lightblue;
-  }
-  
-  .Chat {
-    width: 100%;
-    height: 100%; 
-    background: pink;
-  }
+}
