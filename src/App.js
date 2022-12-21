@@ -4,10 +4,11 @@ import React, { useState, useEffect } from 'react';
 const loadJokes = async () => {
   const response = await fetch('https://catfact.ninja/fact');
   const data = await response.json();
-  if (data) {
-    return data;
-}
-  return [];
+  return data;
+//   if (data) {
+//     return data;
+// }
+//   return [];
 }
 
 function App() {
@@ -33,7 +34,7 @@ function App() {
         {isLoading ? (
           <div>Loading...</div>
         ) : (
-          jokes.map((joke) => <div key={joke.fact}>{joke.length}</div>)
+          jokes.map((joke) => <div key={joke.fact}>{joke.fact}</div>)
         )}
         
     </div>
