@@ -6,8 +6,9 @@ const loadPeople = async () => {
     headers: { "Content-Type": "application/json" },
   });
   const data = await response.json();
+  // return data; // returnes {fact: 'In 1987 cats overtook dogs as the number one pet in America.', length: 60}...
   if (data) {
-    return data.results;
+    return data;
   }
   return [];
 };

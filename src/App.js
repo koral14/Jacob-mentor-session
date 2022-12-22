@@ -1,26 +1,28 @@
 import React, { useState, useEffect } from 'react';
 // import JokeCard from './jokeCard';
 
-const loadJokes = async () => {
-  const response = await fetch('https://catfact.ninja/fact');
-  const data = await response.json();
-  return data;
-//   if (data) {
-//     return data;
-// }
-//   return [];
+const loadCatFacts = async () => {
+  const response = await fetch('https://catfact.ninja/facts');
+  const jsonResponse = await response.json();
+  // return data; // return data; // returnes {fact: 'In 1987 cats overtook dogs as the number one pet in America.', length: 60}...
+  if (jsonResponse) {
+    return jsonResponse.data;
+  }
+  return [];
 }
 
 function App() {
 
   const [jokes, setJokes] = useState();
   const [isLoading, setIsLoading] = useState(true);
+  const [isErrored, setIsErrored] = useState(false);
 
   useEffect(() => {
     if (!jokes) {
-      loadJokes()
+      loadCatFacts()
         .then((data) => setJokes(data))
         .then(() => setIsLoading(false))
+        .then(() => setIsErrored(true))
         .catch((error) => console.log(error.message));
     }
   }, [jokes]);
@@ -33,8 +35,8 @@ function App() {
 
         {isLoading ? (
           <div>Loading...</div>
-        ) : (
-          jokes.map((joke) => <div key={joke.fact}>{joke.fact}</div>)
+        ) : (      
+          jokes.map((cat) => <div key={cat.fact}>{cat.fact}</div>)
         )}
         
     </div>
